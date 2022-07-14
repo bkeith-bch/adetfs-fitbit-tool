@@ -1,0 +1,8 @@
+properties.ini
+*.csv
+*.json
+*.txt
+*.log
+python-fitbit-master/
+.venv/
+__pycache__/

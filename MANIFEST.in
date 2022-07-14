@@ -1,0 +1,12 @@
+# MANIFEST.in
+
+include src/adetfs/*.toml
+include properties_ini_example.ini
+exclude properties.ini
+exclude tokens.txt
+include activate_main.bat
+graft Licenses
+graft tests
+global-exclude *.csv
+global-exclude *.json
+global-exclude *.log
