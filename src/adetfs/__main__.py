@@ -10,14 +10,14 @@ import time
 from datetime import date
 from functools import reduce
 
-import src.adetfs.clientsecret_and_usertokens as cliuser
+import adetfs.clientsecret_and_usertokens as cliuser
 import fitbit
 import pandas as pd
 import requests
-import update_tokens
-from src.adetfs.activity_requests import ActivityStats
-from src.adetfs.email_alert_fitbit import EmailAlert
-from src.adetfs.sleep_stats_url import SleepStatsClass
+import adetfs.update_tokens as update_tokens
+from adetfs.activity_requests import ActivityStats
+from adetfs.email_alert_fitbit import EmailAlert
+from adetfs.sleep_stats_url import SleepStatsClass
 from tqdm import tqdm
 
 #TODO: Prepare the Github and version control for the tool. As we can, in principle, when everything is in order,
@@ -467,7 +467,8 @@ Filename changed to {1}\n".format(str(filename),str(filename+'_copy')))
         fatal_error_list.append(USER_ID)
 
 #TODO:Test the new email alert will it list the users whose data was not extracted
-#EmailAlert.send_email("FitBit data has been succesfully collected.\nEncountered {error_counter} errors \nFollowing \
-#users did not have new data to collect\n".join(map(str, user_list)),"\nFollowing users data was not collected\n".join(map(str,fatal_error_list)))
+msg = EmailAlert("FitBit data has been succesfully collected.\nEncountered {error_counter} errors \nFollowing \
+users did not have new data to collect\n".join(map(str, user_list))+"\nFollowing users data was not collected\n".join(map(str,fatal_error_list)))
+msg.send_email()
 logf.close()
 data_logf.close()
