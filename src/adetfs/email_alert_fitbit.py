@@ -43,7 +43,7 @@ class EmailAlert:
     def send_email(self):
         logf = open("execute.log", "a")
         msg = EmailMessage()
-        msg.set_content('Fitbit Data Extraction weekly report. If any issues see below\n {}'.format(self.message))
+        msg.set_content('Fitbit Data Extraction weekly report. If any issues see below\n\n {}'.format(self.message))
 
         msg['Subject'] = 'Fitbit Data Extraction Alert {}'.format(str(date.today()))
         msg['From'] = self.gmail_user
