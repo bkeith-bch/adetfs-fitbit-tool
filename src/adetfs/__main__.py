@@ -6,6 +6,7 @@ import configparser
 import datetime as dt
 import glob
 import json
+import os
 import time
 from datetime import date
 from functools import reduce
@@ -445,7 +446,9 @@ for i in range(length):
         final_df.set_index(pd.to_datetime(final_df.index, format='%Y-%m-%d'))
         #TODO:Change the filename to correspond the extraction range (?)
         filename = f'{USER_ID}_{TODAY.strftime("%Y_%m_%d")}_all_data'
-        writepath = filename+'.csv'
+        folder = f'/{TODAY.strftime("%Y_%m_%d")}'
+        os.makedirs(folder)
+        writepath = os.path.join(folder,filename+'.csv')
         local_files = glob.glob(writepath)
 
         extraction_time_log[f'{USER_ID}'] = LASTSYNCTIME.strftime("%Y_%m_%d")
@@ -458,7 +461,7 @@ for i in range(length):
         else:
             logf.write("WARNING: This file {0} already exists! \
 Filename changed to {1}\n".format(str(filename),str(filename+'_copy')))
-            new_writepath = filename+"_copy.csv"
+            new_writepath = os.path.join(folder,filename+'_copy.csv')
             final_df.to_csv(new_writepath, index = 'date')
 
     except Exception as FatalError:
