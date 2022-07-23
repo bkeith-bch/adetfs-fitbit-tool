@@ -94,7 +94,7 @@ def rate_limit_reset(request_response):
     for seconds in tqdm(range(wait)):
         time.sleep(1)
 
-#To follow users whose data has not been collected
+#To follow users whose data has not been collected since minimum 14 days
 user_list = []
 
 #List for user id's with fatal error
@@ -173,6 +173,10 @@ for i in range(length):
                 #Continue seems to work as it will take us back to beginning of first for loop
                 data_logf.write(f"{TODAY.strftime('%Y_%m_%d')} No new data to extract for user {USER_ID}\n")
                 print(f'No new data to extract for user {USER_ID}')
+                #TODO: Check that following works and sends on the email all the users
+                #whose data has not been collected since 14 days
+                if (TODAY - LAST_EXTRACTION_TIME.date()).days > 14:
+                    user_list.append(USER_ID)
                 continue            
             
         #If not succesfull
@@ -446,8 +450,12 @@ for i in range(length):
         final_df.set_index(pd.to_datetime(final_df.index, format='%Y-%m-%d'))
         #TODO:Change the filename to correspond the extraction range (?)
         filename = f'{USER_ID}_{TODAY.strftime("%Y_%m_%d")}_all_data'
-        folder = f'/{TODAY.strftime("%Y_%m_%d")}'
-        os.makedirs(folder)
+        folder = f'/{USER_ID}'
+        user_folder = glob.glob(folder)
+        #TODO: Check the behavior of below that we only create a folder if not existing
+        #and then save all the daily files in that one
+        if not user_folder:  
+            os.makedirs(folder)
         writepath = os.path.join(folder,filename+'.csv')
         local_files = glob.glob(writepath)
 
@@ -470,8 +478,8 @@ Filename changed to {1}\n".format(str(filename),str(filename+'_copy')))
         fatal_error_list.append(USER_ID)
 
 #TODO:Test the new email alert will it list the users whose data was not extracted
-msg = EmailAlert("FitBit data has been succesfully collected.\nEncountered {error_counter} errors \nFollowing \
-users did not have new data to collect\n".join(map(str, user_list))+"\nFollowing users data was not collected\n".join(map(str,fatal_error_list)))
+msg = EmailAlert(f"FitBit data has been succesfully collected.\nEncountered {error_counter} errors \nData \
+for following users have not been collected for more than 14 days\n{list(map(str, user_list))}\nFollowing users data was not collected\n{list(map(str,fatal_error_list))}")
 msg.send_email()
 logf.close()
 data_logf.close()
