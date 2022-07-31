@@ -4,7 +4,7 @@ Python software for automated extraction of user data from Fitbit server and sav
 
 ## Installation
 
-Use the setup.py
+pip install adetfs
 
 ### Requirements
 
@@ -18,35 +18,42 @@ This software is mainly intented to use in a research purposes but can also be u
 
 It is also the responsibility of the person who uses this software to follow the local regulations according to any data protection and privacy laws.
 
+Example of properties.ini file is available with the source code.
+
 ### Properties.ini: This file contains all the parameters for the software to run. You only have to change the values of the parameters to match yours. Use only plain text, no quotations are needed. Parameters are:
 
 EMAIL:
+
 user = senders gmail address without '@gmail.com' (We suggest creating one for this purpose).
 password = gmail app password (https://support.google.com/accounts/answer/185833?hl=en)
 to = email address of receiver
 
 CR:
+
 cr_file = path to txt file that contains client id and secret
 id = client_id (can be obtained from Fitbit by registering an application)
 secret = client_secret (can be obtained from Fitbit by registering an application)
 
 TOKENS:
-token_file = path to token file. Create a file "filename.txt" and provide the path here. Then use fetch_tokens_to_file module for getting the tokens.
+
+token_file = path to token file. Create a file "filename.txt" and provide the path here. Then use fetch_tokens_to_file module for saving the tokens inside the file.
 
 REFRESH_TOKEN:
+
 url_path = Fitbit API Refresh token URL path
 
-SLEEP_STATS_
+SLEEP_STATS:
+
 api_version = Fitbit API version for sleep stats
 
-START_DATE:
-START_DATE: Integer which provides the length of data that you want to extract. Default value is 7 and will give the data of past 7 days. Ending date is fixed as one day before today.
-
 EXTRACTION_LOG:
-EXTRACTION_LOG_PATH: Path to the extraction log file that contains JSON type information: {USER_ID:last_extraction_date}
+
+EXTRACTION_LOG_PATH: Path to the extraction log file that contains JSON type information: {USER_ID:last_extraction_date,USER_ID2:last_extraction_date}
 
 Complementary part for REDCap projects
+
 REDCap:
+
 token = REDCap project token
 url = REDCap project URL
 
@@ -92,6 +99,8 @@ For fatal errors, software is using "execute.log" to save them. For non-fatal er
 ### Automation:
 
 Software comes with .bat-file which can be used for automation with most Windows OS. For Linux or other OS, please refer the OS help.
+
+.bat-file, among other files like properties.ini, can be found from the source code or project website.
 
 ### Email alert:
 
