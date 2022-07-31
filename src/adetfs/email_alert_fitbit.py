@@ -43,7 +43,7 @@ class EmailAlert:
     def send_email(self):
         logf = open("execute.log", "a")
         msg = EmailMessage()
-        msg.set_content('Fitbit Data Extraction weekly report. If any issues see below\n\n {}'.format(self.message))
+        msg.set_content('Fitbit Data Extraction weekly report. If any issues see below\n\n{}'.format(self.message))
 
         msg['Subject'] = 'Fitbit Data Extraction Alert {}'.format(str(date.today()))
         msg['From'] = self.gmail_user
@@ -69,4 +69,32 @@ class EmailAlert:
         finally:
             logf.close()
 
-#EmailAlert('test error').send_confirm_email()
+    def send_error(self):
+
+        logf = open("execute.log", "a")
+        msg = EmailMessage()
+        msg.set_content('ADETfs has encountered an error. If any issues see below\n\n{}'.format(self.message))
+
+        msg['Subject'] = 'Fitbit Data Extraction Alert {}'.format(str(date.today()))
+        msg['From'] = self.gmail_user
+        msg['To'] = self.to
+
+        #email send request
+        try:
+            # Send the message via our own SMTP server.
+            server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+            server.ehlo()
+            server.login(self.gmail_user, self.gmail_password)
+            server.send_message(msg)
+            server.quit()
+            server.close()
+            #TODO: Remove print command when ready
+            print ('Email sent!')
+        except Exception as e:
+            logf.write(f"{date.today().strftime('%Y_%m_%d')} Email failed : {e}\n")
+            #TODO: Remove print command when ready
+            print(e)
+            print ('Something went wrong...')
+
+        finally:
+            logf.close()
