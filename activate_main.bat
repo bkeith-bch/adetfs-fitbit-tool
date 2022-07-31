@@ -10,12 +10,12 @@ SET /A counter +=1
 IF %counter% LSS 5 (
 goto ping)
 IF %counter% EQU 5 (
-echo "%date% Software did not execute because no internet connection after %counter% tries">> error.log
+echo "%date% Software did not execute because no internet connection after %counter% tries">> error_%datestr%.log
 powershell -window normal -command ""
 exit /b)
 
 :a
 @REM Your connected script here
-cd /d E:\path_to_folder_that_contains_venv\.venv\Scripts\ & activate & cd /d E:\path_to_software_folder\adetfs\ & E:\path_to_folder_that_contains_venv\.venv\Scripts\python.exe -m fitbit_main
+cd /d E:\path_to_folder_that_contains_venv\.venv\Scripts\ & activate & cd /d E:\path_to_software_folder\adetfs\ & E:\path_to_folder_that_contains_venv\.venv\Scripts\python.exe -m adetfs
 powershell -window normal -command ""
 
