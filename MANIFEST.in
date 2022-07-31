@@ -4,6 +4,7 @@ include src/adetfs/*.toml
 include properties_ini_example.ini
 exclude properties.ini
 exclude tokens.txt
+exclude extraction_log.txt
 include activate_main.bat
 graft Licenses
 graft tests
