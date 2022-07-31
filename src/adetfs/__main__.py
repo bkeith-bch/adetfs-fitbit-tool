@@ -50,7 +50,6 @@ data_log.log that contains any error messages that have occurred during the proc
 
 #TODO:Python licensing follow-up
 #TODO:Test if this tool can be used while only the needed consent has been given (activity,sleep,devices)
-
 length = cliuser.UserToken().length()
 logf = open("execute.log", "a+")
 data_logf = open("data_log.log", "a+")
@@ -91,13 +90,19 @@ TODAY = date.today()
 #Rate limit is reset on top of each hour
 def rate_limit_reset(request_response):
     wait = int(request_response.headers['Fitbit-Rate-Limit-Reset'])+30 #Fitbit-Rate-Limit_Reset is in seconds
+    print('Rate limit will be soon reached. Waiting until limit is reset')
     for seconds in tqdm(range(wait)):
         time.sleep(1)
 
-#To follow users whose data has not been collected since minimum 14 days
+#List of users whose data has not been collected since minimum 7 days
+#On average, Fitbit watches keep minute-by-minute data for maximum 7 days
+#This includes especially the sleep data
 user_list = []
 
-#List for user id's with fatal error
+#List of users whose data was not extracted
+no_data_extracted_user_list = []
+
+#List for user id's with fatal error (fatal error is logged in execute.log)
 fatal_error_list = []
 
 #For-loop to go through line by line the file where user id's and tokens are saved
@@ -130,9 +135,7 @@ for i in range(length):
 
         #FIXME: At the moment our code will fetch new tokens but then it will not run
         #the rest! So we have to launch bat file twice
-    
-        #TODO: Check that this lastsynctime function works and that when we extract data
-        #the extraction works now after one run of batch file
+
         def lastsynctime():
             try:
                 LASTSYNCTIME = pd.to_datetime(json.loads(verification_request.text)[0]['lastSyncTime'])
@@ -162,22 +165,19 @@ for i in range(length):
                 if int(verification_request.headers["Fitbit-Rate-Limit-Remaining"]) < 50:
                     rate_limit_reset(verification_request)
                 else:
-                    user_list.append(USER_ID)
+                    #user_list.append(USER_ID)
                     pass
-            else:
-                #FIXME: 25.6 there was a problem that print out was no new data while we actually had new data
-                #and the new data was even retrieved and saved in CSV. In this case there was only new data for one day
-                #the day before (24.6)
-                #TODO:have to implement this method so that if there is no new data we will
-                #not try to fetch anything.
+            else:    
                 #Continue seems to work as it will take us back to beginning of first for loop
                 data_logf.write(f"{TODAY.strftime('%Y_%m_%d')} No new data to extract for user {USER_ID}\n")
                 print(f'No new data to extract for user {USER_ID}')
                 #TODO: Check that following works and sends on the email all the users
                 #whose data has not been collected since 14 days
-                if (TODAY - LAST_EXTRACTION_TIME.date()).days > 14:
+                if (TODAY - LAST_EXTRACTION_TIME.date()).days > 7:
                     user_list.append(USER_ID)
-                continue            
+                else:
+                    no_data_extracted_user_list.append(USER_ID)
+                    continue            
             
         #If not succesfull
         #TODO: Add the following also in the data fetching parts?
@@ -191,12 +191,17 @@ for i in range(length):
                     #TODO:have to implement this method so that if there is no new data we will
                     #not try to fetch anything.
                     #Continue seems to work as it will take us back to beginning of first for loop
-                    user_list.append(USER_ID)
-                    continue
+                    if (TODAY - LAST_EXTRACTION_TIME.date()).days > 7:
+                        user_list.append(USER_ID)
+                        continue
+                    else:
+                        no_data_extracted_user_list.append(USER_ID)
+                        continue
             elif response_code == 401:
                 update_tokens.update_tokens(USER_ID,REFRESH_TOKEN,EXPIRES_AT)
                 USER_ID,ACCESS_TOKEN,REFRESH_TOKEN,EXPIRES_AT = fetch_auth_args(i)
                 #TODO:Remove print command when code is ready and functioning
+                print(f'Fetching new tokens for user {USER_ID}')
                 print(USER_ID,ACCESS_TOKEN,REFRESH_TOKEN,EXPIRES_AT)
                 auth2_client = fitbit.Fitbit(CLIENT_ID,CLIENT_SECRET,oauth2=True,access_token=ACCESS_TOKEN,refresh_token=REFRESH_TOKEN,redirect_uri=redirect_uri)
                 header = { 'Authorization': 'Bearer ' + ACCESS_TOKEN}
@@ -208,41 +213,25 @@ for i in range(length):
                     if ((LASTSYNCTIME != None) and (LASTSYNCTIME.date() > LAST_EXTRACTION_TIME.date())):
                         pass
                     else:
-                        #TODO:have to implement this method so that if there is no new data we will
-                        #not try to fetch anything.
-                        #Continue seems to work as it will take us back to beginning of first for loop
-                        user_list.append(USER_ID)
-                        continue
+                        if (TODAY - LAST_EXTRACTION_TIME.date()).days > 7:
+                            user_list.append(USER_ID)
+                            continue
+                        else:
+                            no_data_extracted_user_list.append(USER_ID)
+                            continue
                 else:
                     raise Exception('Failed after fetching new tokens: ',new_verification_request.text)
             else:
-                raise Exception(new_verification_request.text)
-        
-        
-        
-        #TODO:We will have to check that lastExtractionTime is datetime
-        #and that we actually have lastSyncTime
-        #otherwise we could have an error
-        #Or could we actually create the lastExtractionTime file the way that
-        #for the first time we have user id's there but for each our lastExtractionTime
-        #is one week before the first automated extraction?
-        #And then we just check that lastSyncTime is not None
-        #Following code works! Just missing a way to easily track whose data
-        #we collected and then with email alert send the users whose data was
-        #not collected
-        
-        
+                raise Exception(new_verification_request.text)        
 
         #Define the range of data we want to fetch
-        #TODO:If we want to always fetch from the last period we should use
-        #enddate_module and as starttime use enddate+1
         
         time_delta = LASTSYNCTIME.date()-LAST_EXTRACTION_TIME.date()
-        print(time_delta)
+        print(f'Fetching data for {USER_ID}. Days passed {time_delta}')
         starttime = LASTSYNCTIME.date()-dt.timedelta(days=int(time_delta.days))
-        print(starttime)
+        #print(starttime)
         endtime = LASTSYNCTIME.date()-dt.timedelta(days=1)
-        print(endtime)
+        #print(endtime)
 
         #Create empty lists that are needed for saving the data
         joined_list = []
@@ -282,6 +271,7 @@ for i in range(length):
                 #If Exception is "Too many Requests" then process will sleep until Fitbit limit reset +30 seconds have passed
                 df_step_data.drop('dateTimeStep',axis=1,inplace=True)
                 #FIXME: And same for other parts when "Too many request" need to be handled
+                #At the moment if we reach request during the fetching we might miss the data for that day for that request
                 if Exception == 'Too many Requests':
                     rate_limit_reset()
                     df_list.append(df_step_data)
@@ -450,7 +440,7 @@ for i in range(length):
         final_df.set_index(pd.to_datetime(final_df.index, format='%Y-%m-%d'))
         #TODO:Change the filename to correspond the extraction range (?)
         filename = f'{USER_ID}_{TODAY.strftime("%Y_%m_%d")}_all_data'
-        folder = f'/{USER_ID}'
+        folder = f'/data/{USER_ID}'
         user_folder = glob.glob(folder)
         #TODO: Check the behavior of below that we only create a folder if not existing
         #and then save all the daily files in that one
@@ -477,9 +467,9 @@ Filename changed to {1}\n".format(str(filename),str(filename+'_copy')))
         error_counter += 1
         fatal_error_list.append(USER_ID)
 
-#TODO:Test the new email alert will it list the users whose data was not extracted
-msg = EmailAlert(f"FitBit data has been succesfully collected.\nEncountered {error_counter} errors \nData \
-for following users have not been collected for more than 14 days\n{list(map(str, user_list))}\nFollowing users data was not collected\n{list(map(str,fatal_error_list))}")
+
+msg = EmailAlert(f"ADETfs has run successfully.\nEncountered {error_counter} errors \nData \
+for following users have not been collected for more than 7 days\n\n{list(map(str, user_list))}\n\nFollowing users data was not collected\n{list(map(str,fatal_error_list))}")
 msg.send_email()
 logf.close()
 data_logf.close()
