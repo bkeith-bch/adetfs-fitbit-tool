@@ -1,6 +1,6 @@
 # ADETfs - Python Research Tool for Fitbit Data
 
-Python software for automated extraction of user data from Fitbit server and save it as csv. Software will also save all the sleep data as JSON file(s) which can be used for example for sleep graphics. This software can also be combined with REDCap module, which can be used to transfer the data to REDCap.
+Python software for automated extraction of user data from Fitbit server and save it as csv. Software will also save all the sleep data as JSON file(s) which can be used for example for sleep graphics. This software can also be combined with import_to_redcap module, which can be used to transfer the data to REDCap.
 
 ## Installation
 
@@ -15,6 +15,8 @@ See the requirements.txt
 Software is easy-to-use but there are few tricks you must do.
 
 This software is mainly intented to use in a research purposes but can also be used and modified to other purposes (see the license file). This software allows easy way to automate the data extraction from the Fitbit server. Fitbit server is not "open-source database" so you can only use this software with user(s) content.
+
+It is also the responsibility of the person who uses this software to follow the local regulations according to any data protection and privacy laws.
 
 ### Properties.ini: This file contains all the parameters for the software to run. You only have to change the values of the parameters to match yours. Use only plain text, no quotations are needed. Parameters are:
 
