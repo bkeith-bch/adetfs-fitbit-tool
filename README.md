@@ -18,41 +18,44 @@ This software is mainly intented to use in a research purposes but can also be u
 
 It is also the responsibility of the person who uses this software to follow the local regulations according to any data protection and privacy laws.
 
-Example of properties.ini file is available with the source code.
+### Properties.ini: This file contains all the parameters for the software to run. You only have to change the values of the parameters to match yours. Use only plain text, no quotations are needed. Example of properties.ini file is available with the source code. Parameters in the file are:
 
-### Properties.ini: This file contains all the parameters for the software to run. You only have to change the values of the parameters to match yours. Use only plain text, no quotations are needed. Parameters are:
-
-EMAIL:
+#### EMAIL:
 
 user = senders gmail address without '@gmail.com' (We suggest creating one for this purpose).
 password = gmail app password (https://support.google.com/accounts/answer/185833?hl=en)
 to = email address of receiver
 
-CR:
+#### CR:
 
 cr_file = path to txt file that contains client id and secret
 id = client_id (can be obtained from Fitbit by registering an application)
 secret = client_secret (can be obtained from Fitbit by registering an application)
 
-TOKENS:
+#### TOKENS:
 
 token_file = path to token file. Create a file "filename.txt" and provide the path here. Then use fetch_tokens_to_file module for saving the tokens inside the file.
 
-REFRESH_TOKEN:
+#### REFRESH_TOKEN:
 
 url_path = Fitbit API Refresh token URL path
 
-SLEEP_STATS:
+#### SLEEP_STATS:
 
 api_version = Fitbit API version for sleep stats
 
-EXTRACTION_LOG:
+### FOLDER_PATH
+
+folder_path = Folder path in which the data will be saved. Software will create a structure '\data\user_id\' in which the files will be saved
+If empty, then folder is ADETfs src folder
+
+#### EXTRACTION_LOG:
 
 EXTRACTION_LOG_PATH: Path to the extraction log file that contains JSON type information: {USER_ID:last_extraction_date,USER_ID2:last_extraction_date}
 
-Complementary part for REDCap projects
+#### Complementary part for REDCap projects
 
-REDCap:
+#### REDCap:
 
 token = REDCap project token
 url = REDCap project URL
@@ -61,9 +64,9 @@ url = REDCap project URL
 
 This file is for automation of the script. Automation will use the time delta between last extraction and last synctime. As a default the tool is meant to be run once a week. If run more seldom, make sure that all the data is being collected (Fitbit has rate limit of 150 queries per hour).
 
-In this Batch file, you will need to add the directory of your Python virtualenvironment (if any), your python.exe file for that environment and the directory of this software main_file.
+In this Batch file, you will need to add the directory of your Python virtualenvironment (if any), your python.exe file for that environment and the directory of this ADETfs main file.
 
-Then you can use Windows Task Scheduler to schedule this file to be run once a week. At the beginning the file has simple check to verify that internet connection is on. If not it will sleep 10 minutes as a default before trying again. Loop will run 5 times and if no connection is established the execution will end and report can be find from the error.log.
+You can use Windows Task Scheduler to schedule this file to be run once a week. At the beginning the file has simple check to verify that internet connection is on. If not it will sleep 10 minutes as a default before trying again. Loop will run 5 times and if no connection is established the execution will end and report can be find from the error.log.
 
 ### Client ID and Client Secret:
 
@@ -90,7 +93,7 @@ Make sure that the file does not contain empty line at the end!
 
 ### CSV and JSON output:
 
-Software will save one CSV file for each day for each user with the extracted data. Non-existing data will be empty. In the case of sleep data, if any, then software will save also JSON file for each day for each user. Each CSV file will be named as 'userid_YYYY_MM_DD_all_data.csv' and JSON file as 'sleep_stats_userid_YYYY_MM_DD.json'. If file is already existing name will contain '_copy' at the end.
+Software will save one CSV file for each day for each user with the extracted data. Non-existing data will be empty. In the case of sleep data, if any, then software will save also JSON file for each day for each user. Each CSV file will be named as 'userid_YYYY_MM_DD_all_data.csv' and JSON file as 'sleep_stats_userid_YYYY_MM_DD.json'. If file is already existing name will contain '_copy' at the end. All files will be saved to folder called 'data\user_id'. Path for this folder can be configured inside properties.ini
 
 ### Error handling:
 
