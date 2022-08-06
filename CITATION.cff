@@ -1,0 +1,22 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: ADETfs
+message: >-
+  If you use this software, please cite it using
+  these metadata and contact the author for more
+  details.
+type: software
+authors:
+  - email: herisson_bleu@outlook.com
+    affiliation: Research Engineer
+repository-code: 'https://github.com/herissonbleu/adetfs-fitbit-tool'
+abstract: Automated data extraction tool for Fitbit data
+keywords:
+  - data extraction
+  - fitbit
+  - automation
+  - research
+license: BSD-3-Clause
+date-released: '2022-08-06'
