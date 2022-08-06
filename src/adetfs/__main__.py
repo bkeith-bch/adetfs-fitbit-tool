@@ -244,8 +244,11 @@ for i in range(length):
         time_delta = LASTSYNCTIME.date()-LAST_EXTRACTION_TIME.date()
         print(f'Fetching data for {USER_ID}. Days passed {time_delta}')
         starttime = LASTSYNCTIME.date()-dt.timedelta(days=int(time_delta.days))
-        #print(starttime)
-        endtime = LASTSYNCTIME.date()-dt.timedelta(days=1)
+        #Endtime has been changed to be 2 days before last synctime to make sure
+        #that data will be collected for all days. It is possible that patient
+        #has synced the watch just after midnight and this way we could miss
+        #the sleep data if using 1 day before
+        endtime = LASTSYNCTIME.date()-dt.timedelta(days=2)
         #print(endtime)
 
         #Create empty lists that are needed for saving the data
@@ -339,7 +342,7 @@ for i in range(length):
                         'minutes_sleep_light':[sleep_stats['levels']['summary']['light']['minutes']],
                         'minutes_sleep_deep':[sleep_stats['levels']['summary']['deep']['minutes']]})
                 sleep_summary_df.loc[:, 'date'] = pd.to_datetime(oneday)
-                with open(f'data/{USER_ID}/sleep_stats_{USER_ID}_{oneday_str_filename}.json', 'w+') as json_file:
+                with open(f'{folder}/sleep_stats_{USER_ID}_{oneday_str_filename}.json', 'w+') as json_file:
                     json.dump(sleep_stats, json_file)
             except Exception as e:
                 data_logf.write(f"{date.today().strftime('%Y_%m_%d')} Sleep Data Failed for user {USER_ID}: {e}\n")
