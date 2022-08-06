@@ -136,9 +136,9 @@ for i in range(length):
         #FIXME: At the moment our code will fetch new tokens but then it will not run
         #the rest! So we have to launch bat file twice
 
-        def lastsynctime():
+        def lastsynctime(request_text):
             try:
-                LASTSYNCTIME = pd.to_datetime(json.loads(verification_request.text)[0]['lastSyncTime'])
+                LASTSYNCTIME = pd.to_datetime(json.loads(request_text.text)[0]['lastSyncTime'])
             except:
                 LASTSYNCTIME = None
             finally:
@@ -160,7 +160,7 @@ for i in range(length):
         #TODO: Change the rate limit from 50 to perhaps 30?
         
         if response_code in succesful_response:
-            LASTSYNCTIME = lastsynctime()
+            LASTSYNCTIME = lastsynctime(verification_request)
             if ((LASTSYNCTIME != None) and (LASTSYNCTIME.date() > LAST_EXTRACTION_TIME.date())):
                 if int(verification_request.headers["Fitbit-Rate-Limit-Remaining"]) < 50:
                     rate_limit_reset(verification_request)
@@ -184,7 +184,7 @@ for i in range(length):
         else:
             if response_code == 429:
                 rate_limit_reset(verification_request)
-                LASTSYNCTIME = lastsynctime()
+                LASTSYNCTIME = lastsynctime(verification_request)
                 if ((LASTSYNCTIME != None) and (LASTSYNCTIME.date() > LAST_EXTRACTION_TIME.date())):
                     pass
                 else:
@@ -198,6 +198,8 @@ for i in range(length):
                         no_data_extracted_user_list.append(USER_ID)
                         continue
             elif response_code == 401:
+                #FIXME: For some reason the code jumps to beginning of the main
+                #loop after executing this part
                 update_tokens.update_tokens(USER_ID,REFRESH_TOKEN,EXPIRES_AT)
                 USER_ID,ACCESS_TOKEN,REFRESH_TOKEN,EXPIRES_AT = fetch_auth_args(i)
                 #TODO:Remove print command when code is ready and functioning
@@ -207,11 +209,12 @@ for i in range(length):
                 header = { 'Authorization': 'Bearer ' + ACCESS_TOKEN}
                 new_verification_request = requests.post(url=url_user_devices,headers=header)
                 new_response_code = new_verification_request.status_code
+                print(f'New response code {new_response_code}')
                 #If succesfull
                 if new_response_code in succesful_response:
-                    LASTSYNCTIME = lastsynctime()
+                    LASTSYNCTIME = lastsynctime(new_verification_request)
                     if ((LASTSYNCTIME != None) and (LASTSYNCTIME.date() > LAST_EXTRACTION_TIME.date())):
-                        pass
+                        break
                     else:
                         if (TODAY - LAST_EXTRACTION_TIME.date()).days > 7:
                             user_list.append(USER_ID)
