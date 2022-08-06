@@ -2,6 +2,7 @@
 
 include src/adetfs/*.toml
 include properties_ini_example.ini
+include CITATION.cff
 exclude properties.ini
 exclude tokens.txt
 exclude extraction_log.txt
