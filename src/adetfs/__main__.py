@@ -126,7 +126,7 @@ for i in range(length):
         USER_ID,ACCESS_TOKEN,REFRESH_TOKEN,EXPIRES_AT = fetch_auth_args(i)
 
         #Check if data folder exist, if not create
-        folder = f'{folder_path}data/{USER_ID}'
+        folder = f'{FOLDER_PATH}data/{USER_ID}'
         user_folder = glob.glob(folder)
         if not user_folder:  
             os.makedirs(folder)
