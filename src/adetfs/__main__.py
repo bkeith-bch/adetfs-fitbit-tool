@@ -78,6 +78,9 @@ STARTING_DATE = config['START_DATE']['START_DATE']
 #Extraction log path
 EXTRACTION_TIME_LOG_PATH = config['EXTRACTION_LOG']['EXTRACTION_LOG_PATH']
 
+#Data folder path
+FOLDER_PATH = config['FOLDER_PATH']['folder_path']
+
 try:
     with open(f'{EXTRACTION_TIME_LOG_PATH}') as f:
         extraction_time_log = json.load(f)
@@ -123,7 +126,7 @@ for i in range(length):
         USER_ID,ACCESS_TOKEN,REFRESH_TOKEN,EXPIRES_AT = fetch_auth_args(i)
 
         #Check if data folder exist, if not create
-        folder = f'data/{USER_ID}'
+        folder = f'{folder_path}data/{USER_ID}'
         user_folder = glob.glob(folder)
         if not user_folder:  
             os.makedirs(folder)
@@ -453,12 +456,6 @@ for i in range(length):
         final_df.set_index(pd.to_datetime(final_df.index, format='%Y-%m-%d'))
         #TODO:Change the filename to correspond the extraction range (?)
         filename = f'{USER_ID}_{TODAY.strftime("%Y_%m_%d")}_all_data'
-        folder = f'data/{USER_ID}'
-        user_folder = glob.glob(folder)
-        #TODO: Check the behavior of below that we only create a folder if not existing
-        #and then save all the daily files in that one
-        if not user_folder:  
-            os.makedirs(folder)
         writepath = os.path.join(folder,filename+'.csv')
         local_files = glob.glob(writepath)
 
