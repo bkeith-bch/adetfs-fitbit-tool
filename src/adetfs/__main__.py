@@ -7,6 +7,7 @@ import datetime as dt
 import glob
 import json
 import os
+import sys
 import time
 from datetime import date
 from functools import reduce
@@ -175,6 +176,7 @@ for i in range(length):
                 #whose data has not been collected since 14 days
                 if (TODAY - LAST_EXTRACTION_TIME.date()).days > 7:
                     user_list.append(USER_ID)
+                    continue
                 else:
                     no_data_extracted_user_list.append(USER_ID)
                     continue            
@@ -214,7 +216,7 @@ for i in range(length):
                 if new_response_code in succesful_response:
                     LASTSYNCTIME = lastsynctime(new_verification_request)
                     if ((LASTSYNCTIME != None) and (LASTSYNCTIME.date() > LAST_EXTRACTION_TIME.date())):
-                        break
+                        pass
                     else:
                         if (TODAY - LAST_EXTRACTION_TIME.date()).days > 7:
                             user_list.append(USER_ID)
@@ -254,7 +256,7 @@ for i in range(length):
             #To check at the beginning of every iteration if we are going to reach the api limit
             #By making the request here we avoid adding it under each API request
             verification_request_weekly = requests.post(url=url_user_devices,headers=header)
-            if int(verification_request_weekly.headers["Fitbit-Rate-Limit-Remaining"]) < 50:
+            if int(verification_request_weekly.headers["Fitbit-Rate-Limit-Remaining"]) < 30:
                 rate_limit_reset(verification_request_weekly)
             
             #Request for step data
@@ -443,13 +445,14 @@ for i in range(length):
         final_df.set_index(pd.to_datetime(final_df.index, format='%Y-%m-%d'))
         #TODO:Change the filename to correspond the extraction range (?)
         filename = f'{USER_ID}_{TODAY.strftime("%Y_%m_%d")}_all_data'
-        folder = f'/data/{USER_ID}'
+        folder = f'data/{USER_ID}'
         user_folder = glob.glob(folder)
         #TODO: Check the behavior of below that we only create a folder if not existing
         #and then save all the daily files in that one
         if not user_folder:  
             os.makedirs(folder)
         writepath = os.path.join(folder,filename+'.csv')
+        print(f'Writepath : {writepath}')
         local_files = glob.glob(writepath)
 
         extraction_time_log[f'{USER_ID}'] = LASTSYNCTIME.strftime("%Y_%m_%d")
@@ -466,13 +469,18 @@ Filename changed to {1}\n".format(str(filename),str(filename+'_copy')))
             final_df.to_csv(new_writepath, index = 'date')
 
     except Exception as FatalError:
-        logf.write(f"{TODAY.strftime('%Y_%m_%d')} Failed to download {USER_ID}: {FatalError}\n")
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        logf.write(f"{TODAY.strftime('%Y_%m_%d')} Failed to download {USER_ID}: {FatalError} : Line {exc_tb.tb_lineno}\n")
         error_counter += 1
         fatal_error_list.append(USER_ID)
+        #Following is for testing if problems
+        #exc_type, exc_obj, exc_tb = sys.exc_info()
+        #fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        #print(exc_type, fname, exc_tb.tb_lineno)
 
 
 msg = EmailAlert(f"ADETfs has run successfully.\nEncountered {error_counter} errors \nData \
-for following users have not been collected for more than 7 days\n\n{list(map(str, user_list))}\n\nFollowing users data was not collected\n{list(map(str,fatal_error_list))}")
+for following users have not been collected for more than 7 days\n\n{list(map(str, user_list))}\n\nFollowing users did not have new data\n{list(map(str,no_data_extracted_user_list))}\n\nFollowing users data was not collected because fatal errors\n{list(map(str,fatal_error_list))}")
 msg.send_email()
 logf.close()
 data_logf.close()
