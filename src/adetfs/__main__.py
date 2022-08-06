@@ -121,6 +121,13 @@ for i in range(length):
             return USER_ID,ACCESS_TOKEN,REFRESH_TOKEN,EXPIRES_AT
         
         USER_ID,ACCESS_TOKEN,REFRESH_TOKEN,EXPIRES_AT = fetch_auth_args(i)
+
+        #Check if data folder exist, if not create
+        folder = f'data/{USER_ID}'
+        user_folder = glob.glob(folder)
+        if not user_folder:  
+            os.makedirs(folder)
+
         #Create connection object
         auth2_client = fitbit.Fitbit(CLIENT_ID,CLIENT_SECRET,oauth2=True,access_token=ACCESS_TOKEN,refresh_token=REFRESH_TOKEN,redirect_uri=redirect_uri) #expires_at=31536000,redirect_uri=redirect_uri,refresh_cb=
 
@@ -329,7 +336,7 @@ for i in range(length):
                         'minutes_sleep_light':[sleep_stats['levels']['summary']['light']['minutes']],
                         'minutes_sleep_deep':[sleep_stats['levels']['summary']['deep']['minutes']]})
                 sleep_summary_df.loc[:, 'date'] = pd.to_datetime(oneday)
-                with open(f'sleep_stats_{USER_ID}_{oneday_str_filename}.json', 'w+') as json_file:
+                with open(f'data/{USER_ID}/sleep_stats_{USER_ID}_{oneday_str_filename}.json', 'w+') as json_file:
                     json.dump(sleep_stats, json_file)
             except Exception as e:
                 data_logf.write(f"{date.today().strftime('%Y_%m_%d')} Sleep Data Failed for user {USER_ID}: {e}\n")
@@ -351,6 +358,7 @@ for i in range(length):
                         'minutes_sleep_deep'])
                 sleep_summary_df.loc[:, 'date'] = pd.to_datetime(oneday)
             finally:
+                #TODO: exception is perhaps not needed as this is handled at the beginning of the loop
                 if Exception == 'Too many Requests':
                     rate_limit_reset()
                 else:
@@ -452,7 +460,6 @@ for i in range(length):
         if not user_folder:  
             os.makedirs(folder)
         writepath = os.path.join(folder,filename+'.csv')
-        print(f'Writepath : {writepath}')
         local_files = glob.glob(writepath)
 
         extraction_time_log[f'{USER_ID}'] = LASTSYNCTIME.strftime("%Y_%m_%d")
