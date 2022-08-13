@@ -22,19 +22,19 @@ It is also the responsibility of the person who uses this software to follow the
 
 #### EMAIL:
 
-user = senders gmail address without '@gmail.com' (We suggest creating one for this purpose).
-password = gmail app password (https://support.google.com/accounts/answer/185833?hl=en)
+user = senders gmail address without '@gmail.com' (We suggest creating one for this purpose).  
+password = gmail app password (https://support.google.com/accounts/answer/185833?hl=en)  
 to = email address of receiver
 
 #### CR:
 
-cr_file = path to txt file that contains client id and secret
-id = client_id (can be obtained from Fitbit by registering an application)
+cr_file = path to txt file that contains client id and secret  
+id = client_id (can be obtained from Fitbit by registering an application)  
 secret = client_secret (can be obtained from Fitbit by registering an application)
 
 #### TOKENS:
 
-token_file = path to token file. Create a file "filename.txt" and provide the path here. Then use fetch_tokens_to_file module for saving the tokens inside the file.
+token_file = path to token file. Create a file "filename.txt" and provide the path here.  Then use fetch_tokens_to_file module for saving the tokens inside the file.
 
 #### REFRESH_TOKEN:
 
@@ -46,18 +46,18 @@ api_version = Fitbit API version for sleep stats
 
 ### FOLDER_PATH
 
-folder_path = Folder path in which the data will be saved. Software will create a structure '\data\user_id\' in which the files will be saved
+folder_path = Folder path in which the data will be saved.  Software will create a structure '\data\user_id\' in which the files will be saved  
 If empty, then folder is ADETfs src folder
 
 #### EXTRACTION_LOG:
 
-EXTRACTION_LOG_PATH: Path to the extraction log file that contains JSON type information: {USER_ID:last_extraction_date,USER_ID2:last_extraction_date}
+EXTRACTION_LOG_PATH: Path to the extraction log file that contains JSON type information:  {USER_ID:last_extraction_date,USER_ID2:last_extraction_date}
 
 #### Complementary part for REDCap projects
 
 #### REDCap:
 
-token = REDCap project token
+token = REDCap project token  
 url = REDCap project URL
 
 ### activate_main.bat:
