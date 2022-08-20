@@ -359,9 +359,8 @@ for i in range(length):
                         sleep_summary_df.loc[:, 'date'] = pd.to_datetime(oneday)
                         print('sleep summary df',sleep_summary_df)
 
-                    #TODO: Add on both df options the other columns as empty
                     elif data['isMainSleep'] == True and data['type'] == 'classic':
-                        #To catch the first sleep cycles for each sleep type and the details of the first "non wake" cycle
+                        #To catch the first sleep cycles in the classic data
                         sleep_first_cycle = next(item for item in data['levels']['data'] if item["level"] == "asleep")
                         sleep_first_restless = next(item for item in data['levels']['data'] if item["level"] == "restless")
                         sleep_first_awake = next(item for item in data['levels']['data'] if item["level"] == "awake")
@@ -393,13 +392,13 @@ for i in range(length):
                     
                     else:
                         continue
-                #Still not working, good example B2Y8KZ
+                
                 try:
                     if 'sleep_summary_df' in globals():
-                        if sleep_summary_df.empty == False: #Use a.empty
+                        if sleep_summary_df.empty == False:
                             pass
                     
-                        else: #len(sleep_summary_df.index) == 0:
+                        else:
                             data = [None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None]
                             sleep_summary_df = pd.DataFrame([data], columns=['sleep_cycle_start',
                                 'sleep_cycle_end',
@@ -452,9 +451,8 @@ for i in range(length):
                         sleep_summary_df.loc[:, 'date'] = pd.to_datetime(oneday)
                 except Exception as e:
                     exc_type, exc_obj, exc_tb = sys.exc_info()
-                    print(e, exc_tb.tb_lineno)
+                    #print(e, exc_tb.tb_lineno)
 
-                #print('second time sleep summary df', sleep_summary_df)
                 
                 with open(f'{folder}/sleep_stats_{USER_ID}_{oneday_str_filename}.json', 'w+') as json_file:
                     json.dump(sleep_stats, json_file)
@@ -490,20 +488,17 @@ for i in range(length):
                 if Exception == 'Too many Requests':
                     rate_limit_reset()
                     df_list.append(sleep_summary_df)
-                    #sleep_summary_df = None
+                    
                 else:
                     df_list.append(sleep_summary_df)
-                    #sleep_summary_df = None
+                    
 
             #Requests for activity minutes
 
             #Sedentary minutes
             try:
                 sedentary_minutes_df = ActivityStats.sedentary_minutes(USER_ID,oneday,auth2_client)
-            #FIXME: These exceptions in activity data do nothing
-            #because the exception handling is inside the activity module
-            #So these should be fixed or leave as they are because finally
-            #this data is not that relevant
+            
             except Exception as e:
                 data_logf.write(f"{TODAY.strftime('%Y_%m_%d')} Sedentary Activity Data Failed for user {USER_ID}: {e}\n")
             finally:
@@ -582,8 +577,8 @@ for i in range(length):
         final_df = pd.concat(final_dfs_list, axis=0)
         #TODO:Following might be unnecessary?
         final_df.set_index(pd.to_datetime(final_df.index, format='%Y-%m-%d'))
-        #TODO:Change the filename to correspond the extraction range (?)
-        filename = f'{USER_ID}_{TODAY.strftime("%Y_%m_%d")}_all_data'
+        
+        filename = f'{USER_ID}_{starttime.strftime("%Y_%m_%d")}_{endtime.strftime("%Y_%m_%d")}'
         writepath = os.path.join(folder,filename+'.csv')
         local_files = glob.glob(writepath)
 
