@@ -326,7 +326,7 @@ for i in range(length):
                     #Make sure to gather the stages (classic is when no heart rate data is available)           
                     if data['isMainSleep'] == True and data['type'] == 'stages':
                         print('Is mainsleep data')
-                        print(data)
+                        #print(data)
 
                         #To catch the first sleep cycles for each sleep type and the details of the first "non wake" cycle
                         sleep_first_cycle = next(item for item in data['levels']['data'] if not item["level"] == "wake")
@@ -348,10 +348,18 @@ for i in range(length):
                         'time_in_the_bed':[data['timeInBed']],
                         'minutes_sleep_rem':[data['levels']['summary']['rem']['minutes']],
                         'minutes_sleep_light':[data['levels']['summary']['light']['minutes']],
-                        'minutes_sleep_deep':[data['levels']['summary']['deep']['minutes']]})
+                        'minutes_sleep_deep':[data['levels']['summary']['deep']['minutes']],
+                        'first_restless':None,
+                        'first_awake':None,
+                        'minutes_to_fall_asleep':None,
+                        'minutes_after_wakeup':None,
+                        'minutes_sleep_awake':None,
+                        'minutes_sleep_restless':None,
+                        'minutes_asleep':None})
                         sleep_summary_df.loc[:, 'date'] = pd.to_datetime(oneday)
                         print('sleep summary df',sleep_summary_df)
-                    
+
+                    #TODO: Add on both df options the other columns as empty
                     elif data['isMainSleep'] == True and data['type'] == 'classic':
                         #To catch the first sleep cycles for each sleep type and the details of the first "non wake" cycle
                         sleep_first_cycle = next(item for item in data['levels']['data'] if item["level"] == "asleep")
@@ -363,78 +371,129 @@ for i in range(length):
                         'first_cycle_start':sleep_first_cycle["dateTime"],
                         'first_cycle_level':sleep_first_cycle["level"],
                         'first_cycle_length_in_seconds':sleep_first_cycle['seconds'],
-                        #'first_light_sleep_start':sleep_first_light['dateTime'],
-                        #'first_deep_sleep_start':sleep_first_deep['dateTime'],
-                        #'first_rem_sleep_start':sleep_first_rem['dateTime'],
-                        'first_restless':sleep_first_restless['dateTime'],
-                        'first_awake':sleep_first_awake['dateTime'],
+                        'first_light_sleep_start':None,
+                        'first_deep_sleep_start':None,
+                        'first_rem_sleep_start':None,
                         'minutes_of_sleep':[data['minutesAsleep']],
                         'minutes_awake':[data['minutesAwake']],
-                        #'minutes_to_fall_asleep':[data['minutesToFallASleep']],
-                        #'minutes_after_wakeup':[data['minutesAfterWakeup']],
                         'number_of_awakenings':[data['levels']['summary']['awake']['count']],
                         'time_in_the_bed':[data['timeInBed']],
+                        'minutes_sleep_rem':None,
+                        'minutes_sleep_light':None,
+                        'minutes_sleep_deep':None,
+                        'first_restless':sleep_first_restless['dateTime'],
+                        'first_awake':sleep_first_awake['dateTime'],
+                        'minutes_to_fall_asleep':[data['minutesToFallAsleep']],
+                        'minutes_after_wakeup':[data['minutesAfterWakeup']],
                         'minutes_sleep_awake':[data['levels']['summary']['awake']['minutes']],
                         'minutes_sleep_restless':[data['levels']['summary']['restless']['minutes']],
                         'minutes_asleep':[data['levels']['summary']['asleep']['minutes']]})
                         sleep_summary_df.loc[:, 'date'] = pd.to_datetime(oneday)
                         print('sleep summary df',sleep_summary_df)
-
                     
                     else:
-                        pass
-                
-                if not isinstance(sleep_summary_df,pd.DataFrame):
-                    data = [None,None,None,None,None,None,None,None,None,None,None,None,None,None,None]
-                    sleep_summary_df = pd.DataFrame([data], columns=['sleep_cycle_start',
-                        'sleep_cycle_end',
-                        'first_cycle_start',
-                        'first_cycle_level',
-                        'first_cycle_length_in_seconds',
-                        'first_light_sleep_start',
-                        'first_deep_sleep_start',
-                        'first_rem_sleep_start',
-                        'minutes_of_sleep',
-                        'minutes_awake',
-                        'number_of_awakenings',
-                        'time_in_the_bed',
-                        'minutes_sleep_rem',
-                        'minutes_sleep_light',
-                        'minutes_sleep_deep'])
-                    sleep_summary_df.loc[:, 'date'] = pd.to_datetime(oneday)
+                        continue
+                #Still not working, good example B2Y8KZ
+                try:
+                    if 'sleep_summary_df' in globals():
+                        if sleep_summary_df.empty == False: #Use a.empty
+                            pass
+                    
+                        else: #len(sleep_summary_df.index) == 0:
+                            data = [None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None]
+                            sleep_summary_df = pd.DataFrame([data], columns=['sleep_cycle_start',
+                                'sleep_cycle_end',
+                                'first_cycle_start',
+                                'first_cycle_level',
+                                'first_cycle_length_in_seconds',
+                                'first_light_sleep_start',
+                                'first_deep_sleep_start',
+                                'first_rem_sleep_start',
+                                'minutes_of_sleep',
+                                'minutes_awake',
+                                'number_of_awakenings',
+                                'time_in_the_bed',
+                                'minutes_sleep_rem',
+                                'minutes_sleep_light',
+                                'minutes_sleep_deep',
+                                'first_restless',
+                                'first_awake',
+                                'minutes_to_fall_asleep',
+                                'minutes_after_wakeup',
+                                'minutes_sleep_awake',
+                                'minutes_sleep_restless',
+                                'minutes_asleep'])
+                            sleep_summary_df.loc[:, 'date'] = pd.to_datetime(oneday)
 
-                print('second time sleep summary df', sleep_summary_df)
+                    else:
+                        data = [None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None]
+                        sleep_summary_df = pd.DataFrame([data], columns=['sleep_cycle_start',
+                            'sleep_cycle_end',
+                            'first_cycle_start',
+                            'first_cycle_level',
+                            'first_cycle_length_in_seconds',
+                            'first_light_sleep_start',
+                            'first_deep_sleep_start',
+                            'first_rem_sleep_start',
+                            'minutes_of_sleep',
+                            'minutes_awake',
+                            'number_of_awakenings',
+                            'time_in_the_bed',
+                            'minutes_sleep_rem',
+                            'minutes_sleep_light',
+                            'minutes_sleep_deep',
+                            'first_restless',
+                            'first_awake',
+                            'minutes_to_fall_asleep',
+                            'minutes_after_wakeup',
+                            'minutes_sleep_awake',
+                            'minutes_sleep_restless',
+                            'minutes_asleep'])
+                        sleep_summary_df.loc[:, 'date'] = pd.to_datetime(oneday)
+                except Exception as e:
+                    exc_type, exc_obj, exc_tb = sys.exc_info()
+                    print(e, exc_tb.tb_lineno)
+
+                #print('second time sleep summary df', sleep_summary_df)
                 
                 with open(f'{folder}/sleep_stats_{USER_ID}_{oneday_str_filename}.json', 'w+') as json_file:
                     json.dump(sleep_stats, json_file)
             except Exception as e:
                 data_logf.write(f"{date.today().strftime('%Y_%m_%d')} Sleep Data Failed for user {USER_ID}: {e}\n")
-                data = [None,None,None,None,None,None,None,None,None,None,None,None,None,None,None]
+                data = [None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None]
                 sleep_summary_df = pd.DataFrame([data], columns=['sleep_cycle_start',
-                        'sleep_cycle_end',
-                        'first_cycle_start',
-                        'first_cycle_level',
-                        'first_cycle_length_in_seconds',
-                        'first_light_sleep_start',
-                        'first_deep_sleep_start',
-                        'first_rem_sleep_start',
-                        'minutes_of_sleep',
-                        'minutes_awake',
-                        'number_of_awakenings',
-                        'time_in_the_bed',
-                        'minutes_sleep_rem',
-                        'minutes_sleep_light',
-                        'minutes_sleep_deep'])
+                            'sleep_cycle_end',
+                            'first_cycle_start',
+                            'first_cycle_level',
+                            'first_cycle_length_in_seconds',
+                            'first_light_sleep_start',
+                            'first_deep_sleep_start',
+                            'first_rem_sleep_start',
+                            'minutes_of_sleep',
+                            'minutes_awake',
+                            'number_of_awakenings',
+                            'time_in_the_bed',
+                            'minutes_sleep_rem',
+                            'minutes_sleep_light',
+                            'minutes_sleep_deep',
+                            'first_restless',
+                            'first_awake',
+                            'minutes_to_fall_asleep',
+                            'minutes_after_wakeup',
+                            'minutes_sleep_awake',
+                            'minutes_sleep_restless',
+                            'minutes_asleep'])
                 sleep_summary_df.loc[:, 'date'] = pd.to_datetime(oneday)
             finally:
                 #TODO: exception is perhaps not needed as this is handled at the beginning of the loop
+                
                 if Exception == 'Too many Requests':
                     rate_limit_reset()
                     df_list.append(sleep_summary_df)
-                    sleep_summary_df = None
+                    #sleep_summary_df = None
                 else:
                     df_list.append(sleep_summary_df)
-                    sleep_summary_df = None
+                    #sleep_summary_df = None
 
             #Requests for activity minutes
 
@@ -568,6 +627,6 @@ if USERNAMES != None:
 print(new_user_list)
 msg = EmailAlert(f"ADETfs has run successfully.\nEncountered {error_counter} errors \nData \
 for following users have not been collected for more than 7 days\n\n{list(map(str, user_list))}\n\nFollowing users did not have new data\n{list(map(str,no_data_extracted_user_list))}\n\nFollowing users data was not collected because fatal errors\n{list(map(str,fatal_error_list))}")
-msg.send_email()
+#msg.send_email()
 logf.close()
 data_logf.close()
