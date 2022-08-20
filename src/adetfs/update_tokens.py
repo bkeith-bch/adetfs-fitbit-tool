@@ -16,12 +16,12 @@ expires_in: Token expire time
 Returns:
 None
 """
-
-import requests
-import re
 import base64
-import json
 import configparser
+import json
+import re
+import requests
+
 
 config = configparser.ConfigParser()
 config.read('properties.ini')

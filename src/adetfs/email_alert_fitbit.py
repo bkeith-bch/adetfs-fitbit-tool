@@ -23,8 +23,6 @@ import smtplib
 
 #https://towardsdatascience.com/send-data-alert-with-python-smtp-efb9ee08077e
 
-#TODO: Change in other files so that token file path is not visible but
-#instead we use config file and inside [filepath]
 #TODO: Change the code to return the text so that if the connection
 #fails we will know it and have it in the logs
 

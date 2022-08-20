@@ -5,7 +5,7 @@ except ModuleNotFoundError:
     import toml as tomllib
 
 # Version of the adetfs package
-__version__ = "1.0.rc4"
+__version__ = "1.0.rc5"
 
 _cfg = tomllib.loads(resources.read_text("adetfs", "config.toml"))
 URL = _cfg["homepage"]["url"]
