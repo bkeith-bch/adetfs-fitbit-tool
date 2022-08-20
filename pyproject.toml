@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "adetfs"
-version = "1.0.rc6"
+version = "1.0.rc7"
 description = "Automated Data Extraction Tool for Fitbit Server"
 readme = "README.md"
 authors = [{ name = "herissonbleu", email = "herisson_bleu@outlook.com" }]
@@ -38,7 +38,7 @@ Homepage = "https://github.com/herissonbleu"
 [project.scripts]
 adetfs_tool = "adetfs.__main__:main"
 [tool.bumpver]
-current_version = "1.0.rc6"
+current_version = "1.0.rc7"
 version_pattern = "MAJOR.MINOR.[TAGNUM]"
 commit_message = "bump version {old_version} -> {new_version}"
 commit = true
