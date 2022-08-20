@@ -25,6 +25,8 @@ It is also the responsibility of the person who uses this software to follow the
 user = senders gmail address without '@gmail.com' (We suggest creating one for this purpose).  
 password = gmail app password (https://support.google.com/accounts/answer/185833?hl=en)  
 to = email address of receiver
+usernames = filepath to txt file that contains json type dictionary with Fitbit userid and the name user want to use in email alert
+Example: {"1XX23": "Test user 1", "9BB34":"Test user 2", "8CC35": "userid"}
 
 #### CR:
 
@@ -44,7 +46,7 @@ url_path = Fitbit API Refresh token URL path
 
 api_version = Fitbit API version for sleep stats
 
-### FOLDER_PATH
+#### FOLDER_PATH
 
 folder_path = Folder path in which the data will be saved.  Software will create a structure '\data\user_id\' in which the files will be saved  
 If empty, then folder is ADETfs src folder
@@ -52,6 +54,8 @@ If empty, then folder is ADETfs src folder
 #### EXTRACTION_LOG:
 
 EXTRACTION_LOG_PATH: Path to the extraction log file that contains JSON type information:  {USER_ID:last_extraction_date,USER_ID2:last_extraction_date}
+This file is used to see if there is new data available for the user.
+Extraction is being done until two days before last sync time to not miss any sleep data
 
 #### Complementary part for REDCap projects
 
