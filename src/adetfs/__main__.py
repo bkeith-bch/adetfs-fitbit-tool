@@ -48,8 +48,6 @@ from tqdm import tqdm
 #TODO:Python licensing follow-up
 def main():
     length = cliuser.UserToken().length()
-    logf = open("execute.log", "a+")
-    data_logf = open("data_log.log", "a+")
     redirect_uri='http://127.0.0.1:8080/'
 
     #Following will fetch the application id and secret
@@ -73,6 +71,10 @@ def main():
 
     #Data folder path
     FOLDER_PATH = config['FOLDER_PATH']['folder_path']
+
+    #opening the logs / creating them into the folder path
+    logf = open(f"{FOLDER_PATH}execute.log", "a+")
+    data_logf = open(f"{FOLDER_PATH}data_log.log", "a+")
 
     #Optional user names dictionary file path
     USERNAMES = config['EMAIL']['usernames']
