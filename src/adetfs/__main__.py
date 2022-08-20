@@ -1,3 +1,26 @@
+"""Program to export Fitbit data and save it as a csv file
+
+Program includes also import_to_redcap module which can import
+the extracted Fitbit data into REDCap project
+
+Requires:
+token.txt: file that has user_id,expires_in,access_token and refresh_token for each user whose data is being exported.
+            One line per user and arguments separated by comma
+cr.txt file that contains client_id and client_secret
+
+Client_id and secret need to be saved in cr.txt file and they can be obtained by creating Fitbit Application
+To obtain the user_id,expires_in, access_token and refresh_token you need to use fetch_tokens_to_file module
+
+Returns:
+csv file for each user with date of data export including the data from previous 7 days
+execute.log that contains any error messages that have stopped the process
+data_log.log that contains any error messages that have occurred during the process but which do not stop the program for running
+"""
+#Parts of the code / modules are using following packages:
+#https://github.com/mGalarnyk/Python_Tutorials/blob/master/Apis/Fitbit/Fitbit_API.ipynb
+#https://github.com/mGalarnyk/Python_Tutorials/blob/master/Apis/Fitbit/gather_keys_oauth2.py
+#https://github.com/orcasgit/python-fitbit
+
 #TODO: Use isort or manually sort imports to follow the common standard:
 #alphabetically, then alphabetically from third party libraries
 #and finally alphabetically from your own libraries
@@ -22,35 +45,8 @@ from adetfs.email_alert_fitbit import EmailAlert
 from adetfs.sleep_stats_url import SleepStatsClass
 from tqdm import tqdm
 
-#TODO: Prepare the Github and version control for the tool. As we can, in principle, when everything is in order,
-#publish the tool in Github with the name and we can create another repository without the commit history
-
-
-"""Program to export Fitbit data and save it as a csv file
-
-Program includes also import_to_redcap module which can import
-the extracted Fitbit data into REDCap project
-
-Requires:
-token.txt: file that has user_id,expires_in,access_token and refresh_token for each user whose data is being exported.
-            One line per user and arguments separated by comma
-cr.txt file that contains client_id and client_secret
-
-Client_id and secret need to be saved in cr.txt file and they can be obtained by creating Fitbit Application
-To obtain the user_id,expires_in, access_token and refresh_token you need to use fetch_tokens_to_file module
-
-Returns:
-csv file for each user with date of data export including the data from previous 7 days
-execute.log that contains any error messages that have stopped the process
-data_log.log that contains any error messages that have occurred during the process but which do not stop the program for running
-"""
-#Parts of the code / modules are using following packages:
-#https://github.com/mGalarnyk/Python_Tutorials/blob/master/Apis/Fitbit/Fitbit_API.ipynb
-#https://github.com/mGalarnyk/Python_Tutorials/blob/master/Apis/Fitbit/gather_keys_oauth2.py
-#https://github.com/orcasgit/python-fitbit
-
 #TODO:Python licensing follow-up
-#TODO:Test if this tool can be used while only the needed consent has been given (activity,sleep,devices)
+
 length = cliuser.UserToken().length()
 logf = open("execute.log", "a+")
 data_logf = open("data_log.log", "a+")
@@ -70,10 +66,7 @@ succesful_response = {200,201,204}
 config = configparser.ConfigParser()
 config.read('properties.ini')
 
-#Fetching the starting date. This is the amount of days backwards which the interval for extraction will start.
-#End date is fixed to be the date before today
-#FIXME:Not needed in the final version which will use last sync time and extraction date
-STARTING_DATE = config['START_DATE']['START_DATE']
+#End date is fixed to be the date two days before today
 
 #Extraction log path
 EXTRACTION_TIME_LOG_PATH = config['EXTRACTION_LOG']['EXTRACTION_LOG_PATH']
@@ -115,7 +108,6 @@ fatal_error_list = []
 #For-loop to go through line by line the file where user id's and tokens are saved
 #FIXME: Fix so that if there is empty line, the code will not break. So if there is empty line between two users
 #we will continue with the one after the line, and if it is empty line at the end, we will finish
-#TODO: We can use profile endpoint to get fullName which will have the email (if fullname is not provided)
 for i in range(length):
     try:
         #Fetch the user id and tokens and open authenticated connection
@@ -146,9 +138,6 @@ for i in range(length):
         header = { 'Authorization': 'Bearer ' + ACCESS_TOKEN}
         verification_request = requests.post(url=url_user_devices,headers=header)
         response_code = verification_request.status_code
-
-        #FIXME: At the moment our code will fetch new tokens but then it will not run
-        #the rest! So we have to launch bat file twice
 
         def lastsynctime(request_text):
             try:
@@ -219,7 +208,7 @@ for i in range(length):
                 USER_ID,ACCESS_TOKEN,REFRESH_TOKEN,EXPIRES_AT = fetch_auth_args(i)
                 #TODO:Remove print command when code is ready and functioning
                 print(f'Fetching new tokens for user {USER_ID}')
-                print(USER_ID,ACCESS_TOKEN,REFRESH_TOKEN,EXPIRES_AT)
+                #print(USER_ID,ACCESS_TOKEN,REFRESH_TOKEN,EXPIRES_AT)
                 auth2_client = fitbit.Fitbit(CLIENT_ID,CLIENT_SECRET,oauth2=True,access_token=ACCESS_TOKEN,refresh_token=REFRESH_TOKEN,redirect_uri=redirect_uri)
                 header = { 'Authorization': 'Bearer ' + ACCESS_TOKEN}
                 new_verification_request = requests.post(url=url_user_devices,headers=header)
@@ -325,7 +314,7 @@ for i in range(length):
                     #There is no possibility to gather either classic or stages data so hear we specifically
                     #Make sure to gather the stages (classic is when no heart rate data is available)           
                     if data['isMainSleep'] == True and data['type'] == 'stages':
-                        print('Is mainsleep data')
+                        #print('Is mainsleep data')
                         #print(data)
 
                         #To catch the first sleep cycles for each sleep type and the details of the first "non wake" cycle
@@ -357,7 +346,7 @@ for i in range(length):
                         'minutes_sleep_restless':None,
                         'minutes_asleep':None})
                         sleep_summary_df.loc[:, 'date'] = pd.to_datetime(oneday)
-                        print('sleep summary df',sleep_summary_df)
+                        #print('sleep summary df',sleep_summary_df)
 
                     elif data['isMainSleep'] == True and data['type'] == 'classic':
                         #To catch the first sleep cycles in the classic data
@@ -388,7 +377,7 @@ for i in range(length):
                         'minutes_sleep_restless':[data['levels']['summary']['restless']['minutes']],
                         'minutes_asleep':[data['levels']['summary']['asleep']['minutes']]})
                         sleep_summary_df.loc[:, 'date'] = pd.to_datetime(oneday)
-                        print('sleep summary df',sleep_summary_df)
+                        #print('sleep summary df',sleep_summary_df)
                     
                     else:
                         continue
@@ -619,9 +608,9 @@ if USERNAMES != None:
     new_no_data_extracted_user_list = user_name_mapping(no_data_extracted_user_list)
     user_list = new_user_list
     no_data_extracted_user_list = new_no_data_extracted_user_list
-print(new_user_list)
-msg = EmailAlert(f"ADETfs has run successfully.\nEncountered {error_counter} errors \nData \
-for following users have not been collected for more than 7 days\n\n{list(map(str, user_list))}\n\nFollowing users did not have new data\n{list(map(str,no_data_extracted_user_list))}\n\nFollowing users data was not collected because fatal errors\n{list(map(str,fatal_error_list))}")
-#msg.send_email()
+#print(new_user_list)
+msg = EmailAlert(f"ADETfs has run successfully.\nEncountered {error_counter} errors \nFollowing \
+users have not synced during the last 7 days or more\n\n{list(map(str, user_list))}\n\nFollowing users did not have new data for the past 7 days\n{list(map(str,no_data_extracted_user_list))}\n\nFollowing users data was not collected because fatal errors\n{list(map(str,fatal_error_list))}")
+msg.send_email()
 logf.close()
 data_logf.close()
