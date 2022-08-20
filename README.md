@@ -16,6 +16,9 @@ Software is easy-to-use but there are few tricks you must do.
 
 This software is mainly intented to use in a research purposes but can also be used and modified to other purposes (see the license file). This software allows easy way to automate the data extraction from the Fitbit server. Fitbit server is not "open-source database" so you can only use this software with user(s) content.
 
+This software can be run from the command-prompt using: python -m adetfs
+Before launching, navigate to the folder that contains properties.ini file
+
 It is also the responsibility of the person who uses this software to follow the local regulations according to any data protection and privacy laws.
 
 ## Properties.ini: This file contains all the parameters for the software to run. You only have to change the values of the parameters to match yours. Use only plain text, no quotations are needed. This file need to placed in the adetfs folder path. Example of properties.ini file is available with the source code. Parameters in the file are:
@@ -64,7 +67,7 @@ Extraction is being done until two days before last sync time to not miss any sl
 token = REDCap project token  
 url = REDCap project URL
 
-### activate_main.bat:
+### activate_main.bat: You can get example of this file from the project homepage
 
 This file is for automation of the script. Automation will use the time delta between last extraction and last synctime. As a default the tool is meant to be run once a week. If run more seldom, make sure that all the data is being collected (Fitbit has rate limit of 150 queries per hour).
 
