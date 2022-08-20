@@ -21,7 +21,7 @@ Before launching, navigate to the folder that contains properties.ini file
 
 It is also the responsibility of the person who uses this software to follow the local regulations according to any data protection and privacy laws.
 
-## Properties.ini: This file contains all the parameters for the software to run. You only have to change the values of the parameters to match yours. Use only plain text, no quotations are needed. This file need to placed in the adetfs folder path. Example of properties.ini file is available with the source code. Parameters in the file are:
+## Properties.ini: This file contains all the parameters for the software to run. You only have to change the values of the parameters to match yours. Use only plain text, no quotations are needed. This file need to placed in the ADETfs folder path. Example of properties.ini file is available with the source code. Parameters in the file are:
 
 #### EMAIL:
 
@@ -33,7 +33,6 @@ Example: {"1XX23": "Test user 1", "9BB34":"Test user 2", "8CC35": "userid"}
 
 #### CR:
 
-cr_file = path to txt file that contains client id and secret  
 id = client_id (can be obtained from Fitbit by registering an application)  
 secret = client_secret (can be obtained from Fitbit by registering an application)
 
@@ -51,8 +50,8 @@ api_version = Fitbit API version for sleep stats
 
 #### FOLDER_PATH
 
-folder_path = Folder path in which the data will be saved.  Software will create a structure '\data\user_id\' in which the files will be saved  
-If empty, then folder is ADETfs src folder
+folder_path = Folder path in which the data will be saved.  Software will create a structure '\data\user_id\' in which the user files will be saved
+Execute.log and data.log are save under this path
 
 #### EXTRACTION_LOG:
 
@@ -67,7 +66,7 @@ Extraction is being done until two days before last sync time to not miss any sl
 token = REDCap project token  
 url = REDCap project URL
 
-### activate_main.bat: You can get example of this file from the project homepage
+### activate_main.bat: You can download this file from the project homepage
 
 This file is for automation of the script. Automation will use the time delta between last extraction and last synctime. As a default the tool is meant to be run once a week. If run more seldom, make sure that all the data is being collected (Fitbit has rate limit of 150 queries per hour).
 
