@@ -23,7 +23,9 @@ powershell -window normal -command ""
 exit /b)
 
 :a
-@REM Your connected script here
+@REM Your Python script here
+::If Python is system variable, you may also just navigate to the folder of properties.ini
+::and launch the program with : Python -m adetfs
 cd /d E:\path_to_folder_that_contains_venv\.venv\Scripts\ & activate & cd /d E:\path_to_software_folder\adetfs\ & E:\path_to_folder_that_contains_venv\.venv\Scripts\python.exe -m adetfs
 powershell -window normal -command ""
 
