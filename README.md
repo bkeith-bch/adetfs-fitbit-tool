@@ -1,12 +1,12 @@
-# ADETfs - Python Research Tool for Fitbit Data
+# ADETfs - Automated Data Extraction Tool for Fitbit server
 
-Python software for automated extraction of user data from Fitbit server and save it as csv. Software will also save all the sleep data as JSON file(s) which can be used for example for sleep graphics. This software can also be combined with import_to_redcap module, which can be used to transfer the data to REDCap.
+Python software for automated extraction of user data from Fitbit server and saving it as csv. Software also saves all the sleep data as JSON file(s) which can be used for example for sleep graphics. This software can also be combined with import_to_redcap module, which can be used to transfer the data to REDCap.
 
 ## Installation
 
 pip install adetfs
 
-### Requirements
+## Requirements
 
 See the requirements.txt
 
@@ -18,7 +18,7 @@ This software is mainly intented to use in a research purposes but can also be u
 
 It is also the responsibility of the person who uses this software to follow the local regulations according to any data protection and privacy laws.
 
-### Properties.ini: This file contains all the parameters for the software to run. You only have to change the values of the parameters to match yours. Use only plain text, no quotations are needed. Example of properties.ini file is available with the source code. Parameters in the file are:
+## Properties.ini: This file contains all the parameters for the software to run. You only have to change the values of the parameters to match yours. Use only plain text, no quotations are needed. This file need to placed in the adetfs folder path. Example of properties.ini file is available with the source code. Parameters in the file are:
 
 #### EMAIL:
 
@@ -57,7 +57,7 @@ EXTRACTION_LOG_PATH: Path to the extraction log file that contains JSON type inf
 This file is used to see if there is new data available for the user.
 Extraction is being done until two days before last sync time to not miss any sleep data
 
-#### Complementary part for REDCap projects
+### Complementary part for REDCap projects
 
 #### REDCap:
 
