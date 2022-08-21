@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "adetfs"
-version = "1.1.rc0"
+version = "1.1.0rc0"
 description = "Automated Data Extraction Tool for Fitbit Server"
 readme = "README.md"
 authors = [{ name = "herissonbleu", email = "herisson_bleu@outlook.com" }]
