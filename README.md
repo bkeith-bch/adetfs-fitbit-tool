@@ -90,7 +90,7 @@ Be aware, that if ever you will have to revoke the client secret, you will have 
 
 NEVER EXPOSE THE USER TOKENS!
 
-You must save your user(s) Fitbit id, expiration of authentication, access token and refresh token into the tokens text file. This have to be done manually using Fitbit Authentication. For this you can use fetch_tokens_to_file module. After running the module, a browser will open to Fitbit login page and ask the user to login. After login user will be asked the consent. After confirmation, the tokens will be saved in the tokens text file. Before fetching tokens for the next user, you will have to open Fitbit website and log out with the current user. Otherwise you will automatically fetch new tokens for the logged in user.
+You must save your user(s) Fitbit id, expiration of authentication, access token and refresh token into the tokens text file. This have to be done manually using Fitbit Authentication. For this you can use fetch_tokens_to_file module. This module can be downloaded from the project homepage. There is also a copy of gather_keys_oauth2 module (original can be found from https://github.com/orcasgit/python-fitbit) After running the fetch_tokens_to_file module, a browser will open to Fitbit login page and ask the user to login. After login user will be asked the consent. After confirmation, the tokens will be saved in the tokens text file. Before fetching tokens for the next user, you will have to open Fitbit website and log out with the current user. Otherwise you will automatically fetch new tokens for the logged in user.
 
 This part is most time consuming as it can not be automated. After doing this for each user, you should have a token file with each row having:
 user_id,expires_at,access_token,refresh_token
