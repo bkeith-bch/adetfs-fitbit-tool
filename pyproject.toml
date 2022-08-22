@@ -33,7 +33,7 @@ requires-python = ">=3.8"
 dev = ["unittest","pip-tools","bumpver"]
 
 [project.urls]
-Homepage = "https://github.com/herissonbleu"
+Homepage = "https://github.com/herissonbleu/adetfs-fitbit-tool"
 
 [project.scripts]
 adetfs_tool = "adetfs.__main__:main"
