@@ -6,6 +6,8 @@ include CITATION.cff
 exclude properties.ini
 exclude tokens.txt
 exclude extraction_log.txt
+exclude src/adetfs/gather_keys_oauth2.py
+exclude src/adetfs/fetch_tokens_to_file.py
 include activate_main.bat
 graft Licenses
 graft tests
