@@ -166,7 +166,7 @@ def main():
             
             if response_code in succesful_response:
                 LASTSYNCTIME = lastsynctime(verification_request)
-                if ((LASTSYNCTIME != None) and (LASTSYNCTIME.date() > LAST_EXTRACTION_TIME.date())):
+                if ((LASTSYNCTIME != None) and (LASTSYNCTIME.date() > (LAST_EXTRACTION_TIME.date() + dt.timedelta(days=2)))):
                     if int(verification_request.headers["Fitbit-Rate-Limit-Remaining"]) < 50:
                         rate_limit_reset(verification_request)
                     else:
@@ -191,7 +191,7 @@ def main():
                 if response_code == 429:
                     rate_limit_reset(verification_request)
                     LASTSYNCTIME = lastsynctime(verification_request)
-                    if ((LASTSYNCTIME != None) and (LASTSYNCTIME.date() > LAST_EXTRACTION_TIME.date())):
+                    if ((LASTSYNCTIME != None) and (LASTSYNCTIME.date() > (LAST_EXTRACTION_TIME.date() + dt.timedelta(days=2)))):
                         pass
                     else:
                         #TODO:have to implement this method so that if there is no new data we will
@@ -219,7 +219,7 @@ def main():
                     #If succesfull
                     if new_response_code in succesful_response:
                         LASTSYNCTIME = lastsynctime(new_verification_request)
-                        if ((LASTSYNCTIME != None) and (LASTSYNCTIME.date() > LAST_EXTRACTION_TIME.date())):
+                        if ((LASTSYNCTIME != None) and (LASTSYNCTIME.date() > (LAST_EXTRACTION_TIME.date() + dt.timedelta(days=2)))):
                             pass
                         else:
                             if (TODAY - LAST_EXTRACTION_TIME.date()).days > 7:
@@ -234,10 +234,12 @@ def main():
                     raise Exception(new_verification_request.text)        
 
             #Define the range of data we want to fetch
+            #FIXME: Since changin to use sync time, this part might skip some days of data
             
             time_delta = LASTSYNCTIME.date()-LAST_EXTRACTION_TIME.date()
             print(f'Fetching data for {USER_ID}. Days passed {time_delta}')
-            starttime = LASTSYNCTIME.date()-dt.timedelta(days=int(time_delta.days))
+            #+2 because our endtime is 2 days before last synctime
+            starttime = LASTSYNCTIME.date()-dt.timedelta(days=int(time_delta.days)+2)
             
             #When you need to fetch data for certain time frame
             #starttime = pd.to_datetime('2022_08_21',format="%Y_%m_%d")
