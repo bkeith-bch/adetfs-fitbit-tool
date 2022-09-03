@@ -238,12 +238,18 @@ def main():
             time_delta = LASTSYNCTIME.date()-LAST_EXTRACTION_TIME.date()
             print(f'Fetching data for {USER_ID}. Days passed {time_delta}')
             starttime = LASTSYNCTIME.date()-dt.timedelta(days=int(time_delta.days))
+            
+            #When you need to fetch data for certain time frame
+            #starttime = pd.to_datetime('2022_08_21',format="%Y_%m_%d")
+            
             #Endtime has been changed to be 2 days before last synctime to make sure
             #that data will be collected for all days. It is possible that patient
             #has synced the watch just after midnight and this way we could miss
             #the sleep data if using 1 day before
             endtime = LASTSYNCTIME.date()-dt.timedelta(days=2)
-            #print(endtime)
+            
+            #When you need to fetch data for certain time frame
+            #endtime = pd.to_datetime('2022_08_31',format="%Y_%m_%d"
 
             #Create empty lists that are needed for saving the data
             joined_list = []
@@ -348,7 +354,7 @@ def main():
                             'minutes_sleep_restless':None,
                             'minutes_asleep':None})
                             sleep_summary_df.loc[:, 'date'] = pd.to_datetime(oneday)
-                            #print('sleep summary df',sleep_summary_df)
+                            #print('sleep summary df\n',sleep_summary_df)
 
                         elif data['isMainSleep'] == True and data['type'] == 'classic':
                             #To catch the first sleep cycles in the classic data
@@ -379,14 +385,16 @@ def main():
                             'minutes_sleep_restless':[data['levels']['summary']['restless']['minutes']],
                             'minutes_asleep':[data['levels']['summary']['asleep']['minutes']]})
                             sleep_summary_df.loc[:, 'date'] = pd.to_datetime(oneday)
-                            #print('sleep summary df',sleep_summary_df)
+                            #print('sleep summary df CLASSIC\n',sleep_summary_df)
                         
                         else:
                             continue
                     
                     try:
-                        if 'sleep_summary_df' in globals():
+                        if 'sleep_summary_df' in locals():
+                            #print('IN locals\n')
                             if sleep_summary_df.empty == False:
+                                #print('Not empty')
                                 pass
                         
                             else:
@@ -416,6 +424,7 @@ def main():
                                 sleep_summary_df.loc[:, 'date'] = pd.to_datetime(oneday)
 
                         else:
+                            #print('Not in locals\n')
                             data = [None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None]
                             sleep_summary_df = pd.DataFrame([data], columns=['sleep_cycle_start',
                                 'sleep_cycle_end',
