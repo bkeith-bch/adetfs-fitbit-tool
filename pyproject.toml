@@ -57,5 +57,4 @@ push = true
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["properties_ini_example.ini","CITATION.cff","tests","Licenses"]
 

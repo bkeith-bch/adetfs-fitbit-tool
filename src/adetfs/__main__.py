@@ -71,7 +71,13 @@ def main():
 
     #Data folder path
     FOLDER_PATH = config['FOLDER_PATH']['folder_path']
+    if FOLDER_PATH[-1] != '\\':
+        FOLDER_PATH += '\\'
 
+    # check data folder exists, create if not
+    if not os.path.isdir(FOLDER_PATH):
+        os.mkdir(FOLDER_PATH)
+    
     #opening the logs / creating them into the folder path
     logf = open(f"{FOLDER_PATH}execute.log", "a+")
     data_logf = open(f"{FOLDER_PATH}data_log.log", "a+")
@@ -112,6 +118,8 @@ def main():
     #we will continue with the one after the line, and if it is empty line at the end, we will finish
     for i in range(length):
         try:
+            if len(cliuser.UserToken().user(i)) < 1:
+                continue
             #Fetch the user id and tokens and open authenticated connection
             def fetch_auth_args(i):
                 USER_ID = cliuser.UserToken().user(i)[0]
@@ -138,7 +146,7 @@ def main():
                     )
             
             header = { 'Authorization': 'Bearer ' + ACCESS_TOKEN}
-            verification_request = requests.post(url=url_user_devices,headers=header)
+            verification_request = requests.get(url=url_user_devices,headers=header)
             response_code = verification_request.status_code
 
             def lastsynctime(request_text):
@@ -213,7 +221,7 @@ def main():
                     #print(USER_ID,ACCESS_TOKEN,REFRESH_TOKEN,EXPIRES_AT)
                     auth2_client = fitbit.Fitbit(CLIENT_ID,CLIENT_SECRET,oauth2=True,access_token=ACCESS_TOKEN,refresh_token=REFRESH_TOKEN,redirect_uri=redirect_uri)
                     header = { 'Authorization': 'Bearer ' + ACCESS_TOKEN}
-                    new_verification_request = requests.post(url=url_user_devices,headers=header)
+                    new_verification_request = requests.get(url=url_user_devices,headers=header)
                     new_response_code = new_verification_request.status_code
                     print(f'New response code {new_response_code}')
                     #If succesfull
@@ -270,7 +278,7 @@ def main():
 
                 #To check at the beginning of every iteration if we are going to reach the api limit
                 #By making the request here we avoid adding it under each API request
-                verification_request_weekly = requests.post(url=url_user_devices,headers=header)
+                verification_request_weekly = requests.get(url=url_user_devices,headers=header)
                 if int(verification_request_weekly.headers["Fitbit-Rate-Limit-Remaining"]) < 30:
                     rate_limit_reset(verification_request_weekly)
                 
@@ -616,15 +624,16 @@ def main():
         return mapped_user_names
 
     print(user_list)
-    if USERNAMES != None:
-        new_user_list = user_name_mapping(user_list)
-        new_no_data_extracted_user_list = user_name_mapping(no_data_extracted_user_list)
-        user_list = new_user_list
-        no_data_extracted_user_list = new_no_data_extracted_user_list
-    #print(new_user_list)
-    msg = EmailAlert(f"ADETfs has run successfully.\nEncountered {error_counter} errors \nFollowing \
-    users have not synced during the last 7 days or more\n\n{list(map(str, user_list))}\n\nFollowing users did not have new data for the past 7 days\n{list(map(str,no_data_extracted_user_list))}\n\nFollowing users data was not collected because fatal errors\n{list(map(str,fatal_error_list))}")
-    msg.send_email()
+    # This portion send the gmail email alert
+    # if USERNAMES != None:
+    #     new_user_list = user_name_mapping(user_list)
+    #     new_no_data_extracted_user_list = user_name_mapping(no_data_extracted_user_list)
+    #     user_list = new_user_list
+    #     no_data_extracted_user_list = new_no_data_extracted_user_list
+    # #print(new_user_list)
+    # msg = EmailAlert(f"ADETfs has run successfully.\nEncountered {error_counter} errors \nFollowing \
+    # users have not synced during the last 7 days or more\n\n{list(map(str, user_list))}\n\nFollowing users did not have new data for the past 7 days\n{list(map(str,no_data_extracted_user_list))}\n\nFollowing users data was not collected because fatal errors\n{list(map(str,fatal_error_list))}")
+    # msg.send_email()
     logf.close()
     data_logf.close()
 

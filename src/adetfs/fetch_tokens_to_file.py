@@ -17,6 +17,7 @@ Nothing
 """
 
 import configparser
+import os
 
 import gather_keys_oauth2 as oauth2
 
@@ -28,6 +29,9 @@ config.read('properties.ini')
 token_file_path = config['TOKENS']['token_file']
 CLIENT_ID = config['CR']['id']
 CLIENT_SECRET = config['CR']['secret']
+
+if not os.path.isdir("auth"):
+        os.mkdir("auth")
 
 try:
     #Connecting to server to obtain user consent and to get the tokens and user id
